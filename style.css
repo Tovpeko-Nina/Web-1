@@ -9,7 +9,6 @@ body {
     color: black;
     line-height: 1.6;
     margin: 0px;
-    min-height: 100vh
 
 }
 
@@ -82,7 +81,6 @@ img {
 
 table {
     width: 65%;
-    border: 1px;
     border-color: black;
     border-collapse: collapse;
     text-align: center;
@@ -116,5 +114,7 @@ a {
 
  th, td {
     padding: 12px 15px;
-}
+    border: 1px solid black;
 
+
+}
