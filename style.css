@@ -9,6 +9,7 @@ body {
     color: black;
     line-height: 1.6;
     margin: 0px;
+    min-height: 100vh
 
 }
 
@@ -116,3 +117,4 @@ a {
  th, td {
     padding: 12px 15px;
 }
+
