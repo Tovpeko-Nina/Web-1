@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Construct - Собрать ланч</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="print.css" media="print">
+    <script src="dishes.js"></script>
+    <script src="menu.js"></script>
+    <style>
+        /* Стили для страницы "Собрать ланч" */
+        .menu-section {
+            margin-bottom: 40px;
+        }
+
+        .dishes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+            align-items: stretch; /* Растягивает элементы по высоте */
+        }
+
+        .dish-item {
+            display: flex;
+            flex-direction: column;
+            padding: 30px 40px;
+            border-radius: 35px;
+            cursor: pointer;
+            background-color: white;
+            filter: drop-shadow(17px 19px 24px rgba(0, 0, 0, 0.13));
+            transition: all 0.3s ease;
+            min-height: 450px; /* Минимальная высота для всех карточек */
+        }
+
+        .dish-item:hover {
+            border: 2px solid tomato;
+        }
+
+        .dish-item:hover button {
+            background-color: tomato;
+            color: white;
+        }
+
+        .dish-item img {
+            width: 100%;
+            height: 250px; 
+            object-fit: cover; 
+            border-radius: 35px;
+            margin-bottom: 15px;
+        }
+
+        .dish-item .price {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            min-height: 30px; /* Фиксированная высота для цены */
+        }
+
+
+        .dish-item .name {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            flex-grow: 1;
+            min-height: 60px; /* Минимальная высота для названий */
+            display: flex;
+            align-items: center;
+        }
+
+
+        .dish-item .weight {
+            color: gray;
+            margin-bottom: 15px;
+            min-height: 20px; /* Фиксированная высота для веса */
+        }
+
+        .dish-item button {
+            background-color: #f1eee9;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: auto;
+            transition: background-color 0.3s ease;
+            min-height: 45px; /* Фиксированная высота для кнопок */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Стили для формы заказа */
+        .order-form-section {
+            margin-top: 50px;
+            padding: 40px;
+            background-color: #f9f9f9;
+            border-radius: 15px;
+            border-left: 5px solid tomato;
+        }
+
+        .order-form-section h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+            border-bottom: 3px solid tomato;
+            padding-bottom: 15px;
+        }
+
+        .order-form-section h2 {
+            color: tomato;
+            margin: 30px 0 20px 0;
+            font-size: 1.6rem;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .form-group select,
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Roboto Mono', monospace;
+            transition: border-color 0.3s;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: tomato;
+            outline: none;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .delivery-time {
+            margin: 20px 0;
+        }
+
+        .radio-group {
+            margin: 15px 0;
+        }
+
+        .radio-group label {
+            display: inline-flex;
+            align-items: center;
+            font-weight: normal;
+            margin-right: 25px;
+            cursor: pointer;
+        }
+
+        .radio-group input[type="radio"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-weight: normal;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(to right, transparent, #ccc, transparent);
+            margin: 30px 0;
+            border: none;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .form-buttons button {
+            padding: 12px 35px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-family: 'Roboto Mono', monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .reset-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .submit-btn {
+            background-color: tomato;
+            color: white;
+        }
+
+        .submit-btn:hover {
+            background-color: #ff4500;
+            transform: translateY(-2px);
+        }
+
+        .note {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .menu-select {
+            background-color: white;
+            border: 2px solid #ddd;
+        }
+
+        .dish-item.selected {
+    border: 2px solid tomato !important;
+        }
+
+        .order-total {
+            background-color: #f8f8f8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .total-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: tomato;
+            text-align: center;
+            margin: 0;
+        }
+
+    @media (max-width: 800px) {
+        .dishes-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .order-form-section {
+            padding: 20px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        h1 {
+            text-align: center;
+        }
+        
+        .menu-section h2 {
+            text-align: center;
+        }
+        
+        .dishes-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-buttons {
+            flex-direction: column;
+        }
+        
+        .form-buttons button {
+            width: 100%;
+        }
+        
+        .order-form-section {
+            padding: 15px;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .dish-item {
+            padding: 20px 25px;
+        }
+        
+        .order-form-section h1 {
+            font-size: 1.8rem;
+        }
+        
+        .order-form-section h2 {
+            font-size: 1.4rem;
+        }
+    }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Food Construct</h1>
+        <nav>
+            <a href="index.html" class="link-light-bg">Главная</a>
+            <a href="index.html#about" class="link-light-bg">О нас</a>
+            <a href="pack_lunch.html" class="link-light-bg active">Собрать ланч</a>
+            <a href="index.html#contacts" class="link-light-bg">Контакты</a>
+            <a href="feedback.html" class="link-light-bg">Обратная связь</a>
+            <a href="auth.html" class="link-light-bg">Войти</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="menu-section">
+            <h2>Супы</h2>
+            <div class="dishes-grid">
+                <div class="dish-item">
+                    <img src="tom_yam.png" alt="Том Ям с креветками">
+                    <p class="price">365&#8381;</p>
+                    <p class="name">Том Ям с креветками</p>
+                    <p class="weight">350 мл</p>
+                    <button class="add-to-cart">Добавить</button>
+                </div>
+                <div class="dish-item">
+                    <img src="norwegian_soup.png" alt="Норвежский суп">
+                    <p class="price">270&#8381;</p>
+                    <p class="name">Норвежский суп</p>
+                    <p class="weight">350 мл</p>
+                    <button class="add-to-cart">Добавить</button>
+                </div>
+                <div class="dish-item">
+                    <img src="chicken_coup.png" alt="Куриный суп с лапшой">
+                    <p class="price">220&#8381;</p>
+                    <p class="name">Куриный суп с лапшой</p>
+                    <p class="weight">350 мл</p>
+                    <button class="add-to-cart">Добавить</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="menu-section">
+            <h2>Главные блюда</h2>
+            <div class="dishes-grid">
+                <div class="dish-item">
+                    <img src="lasagna.png" alt="Лазанья">
+                    <p class="price">385&#8381;</p>
+                    <p class="name">Лазанья</p>
+                    <p class="weight">350 г</p>
+                    <button class="add-to-cart">Добавить</button>
+                </div>
+                <div class="dish-item">
+                    <img src="mushrooms.png" alt="Жаренная картошка с грибами">
+                    <p class="price">150&#8381;</p>
+                    <p class="name">Жаренная картошка с грибами</p>
+                    <p class="weight">300 г</p>
+                    <button class="add-to-cart">Добавить</button>
+                </div>
+                <div class="dish-item">
+                    <img src="potato.png" alt="Котлеты из курицы с картофельным пюре">
+                    <p class="price">225&#8381;</p>
+                    <p class="name">Котлеты из курицы с картофельным пюре</p>
+                    <p class="weight">350 г</p>
+                    <button class="add-to-cart">Добавить</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="menu-section">
+            <h2>Напитки</h2>
+            <div class="dishes-grid">
+                <div class="dish-item">
+                    <img src="orange.png" alt="Апельсиновый сок">
+                    <p class="price">120&#8381;</p>
+                    <p class="name">Апельсиновый сок</p>
+                    <p class="weight">250 мл</p>
+                    <button class="add-to-cart">Добавить</button>
+                </div>
+                <div class="dish-item">
+                    <img src="apple.png" alt="Яблочный сок">
+                    <p class="price">110&#8381;</p>
+                    <p class="name">Яблочный сок</p>
+                    <p class="weight">250 мл</p>
+                    <button class="add-to-cart">Добавить</button>
+                </div>
+                <div class="dish-item">
+                    <img src="water.png" alt="Минеральная вода">
+                    <p class="price">80&#8381;</p>
+                    <p class="name">Минеральная вода</p>
+                    <p class="weight">500 мл</p>
+                    <button class="add-to-cart">Добавить</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Форма заказа -->
+       <section class="order-form-section">
+            <h1>Сделать заказ</h1>
+            
+            <form action="https://httpbin.org/post" method="post">
+                <!-- Раздел заказа -->
+                <h2>Ваш заказ</h2>
+                
+                <div class="form-group">
+                    <label for="soup">Суп</label>
+                    <select id="soup" name="soup" class="menu-select" required>
+                        <option value="">-- Выберите суп --</option>
+                        <option value="">Суп отсутствует в заказе</option>
+                        <!-- Опции будут заполняться динамически -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="main-course">Главное блюдо</label>
+                    <select id="main-course" name="main_course" class="menu-select" required>
+                        <option value="">-- Выберите главное блюдо --</option>
+                        <option value="">Блюдо отсутствует в заказе</option>
+                        <!-- Опции будут заполняться динамически -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="drink">Напиток</label>
+                    <select id="drink" name="drink" class="menu-select" required>
+                        <option value="">-- Выберите напиток --</option>
+                        <option value="">Напиток отсутствует в заказе</option>
+                        <!-- Опции будут заполняться динамически -->
+                    </select>
+                </div>
+                
+                <!-- Блок для отображения стоимости -->
+                <div id="order-total" style="display: none;"></div>
+                
+                <div class="form-group">
+                    <label for="order-comments">Комментарии к заказу</label>
+                    <textarea id="order-comments" name="order_comments" placeholder="Укажите дополнительные пожелания к заказу..."></textarea>
+                </div>
+                
+                <hr class="divider">
+                
+                <!-- Раздел данных клиента -->
+                <h2>Ваши данные</h2>
+                
+                <div class="form-group">
+                    <label for="name">Имя</label>
+                    <input type="text" id="name" name="name" required placeholder="Введите ваше имя">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required placeholder="example@mail.ru">
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="promotions" name="promotions" checked>
+                    <label for="promotions">Получать информацию о скидках и акциях</label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Номер телефона</label>
+                    <input type="tel" id="phone" name="phone" required placeholder="+7 (000) 000-00-00">
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">Адрес доставки</label>
+                    <input type="text" id="address" name="address" required placeholder="Улица, дом, квартира">
+                    <p class="note">Доставка осуществляется только по Москве</p>
+                </div>
+                
+                <div class="delivery-time">
+                    <label>Время доставки:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="asap" name="delivery_time" value="asap" checked>
+                        <label for="asap">Как можно скорее</label>
+                    </div>
+                    <div class="radio-group">
+                        <input type="radio" id="scheduled" name="delivery_time" value="scheduled">
+                        <label for="scheduled">К указанному времени</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="delivery-time-specific">Укажите время доставки</label>
+                    <input type="text" id="delivery-time-specific" name="delivery_time_specific" placeholder="--:--" disabled>
+                    <p class="note">Доступное время доставки с 7:00 до 23:00</p>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="reset" class="reset-btn">Сбросить</button>
+                    <button type="submit" class="submit-btn">Отправить</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <footer id="contacts">
+        <p class="white-color-for-text">Позвонить нам: <a href="tel:+70000000000" class="link-dark-bg">+7-000-000-00-00</a></p>
+    </footer>
+
+    <script>
+        // Активация поля ввода времени при выборе соответствующей опции
+        document.addEventListener('DOMContentLoaded', function() {
+            const asapRadio = document.getElementById('asap');
+            const scheduledRadio = document.getElementById('scheduled');
+            const timeInput = document.getElementById('delivery-time-specific');
+            
+            function updateTimeInput() {
+                if (scheduledRadio.checked) {
+                    timeInput.disabled = false;
+                    timeInput.required = true;
+                } else {
+                    timeInput.disabled = true;
+                    timeInput.required = false;
+                    timeInput.value = '';
+                }
+            }
+            
+            asapRadio.addEventListener('change', updateTimeInput);
+            scheduledRadio.addEventListener('change', updateTimeInput);
+            
+            // Инициализация состояния
+            updateTimeInput();
+            
+
+        });
+    </script>
+</body>
+
+</html>

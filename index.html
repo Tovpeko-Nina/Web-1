@@ -2,104 +2,95 @@
 <html lang="ru">
     <head>
         <meta charset="UTF-8">
-        <title>Food</title>
-
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Food Construct</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="print.css" media="print">
     </head>
 <body>
     <header>
         <h1> Food Construct </h1>
         <nav>
+            <a href="index.html" class="link-light-bg active">Главная</a>
             <a href="#about" class="link-light-bg">О нас</a>
-            <a href="#pack_lunch" class="link-light-bg">Собрать ланч</a>
-            <a href="#orders" class="link-light-bg">Заказы</a>
+            <a href="pack_lunch.html" class="link-light-bg">Собрать ланч</a>
             <a href="#contacts" class="link-light-bg">Контакты</a>
             <a href="feedback.html" class="link-light-bg">Обратная связь</a>
             <a href="auth.html" class="link-light-bg">Войти</a>
         </nav>
     </header>
-
+    
     <main>
-            <section>
-                <img src="lunch.jpg" alt="Еда">
-                <h2>О нас</h2>
-                <p> Food Constuct - доставка бизнес-ланчей в Москве. 
-                    Мы привезем Вам горячую и вкусную еду в любую точку города к назначенному времени.
-                </p>
-            </section>
+        <section id="about">
+            <img src="lunch.jpg" alt="Фото еды">
+            <h2>О нас</h2>
+            <p> Food Construct - доставка бизнес-ланчей в Москве. 
+                Мы привезем Вам горячую и вкусную еду в любую точку города к назначенному времени.
+            </p>
+        </section>
 
-            <section>
-                    <h2>Преимущества Food Construct</h2>
-            
-                <ul>
-                    <li>Привозим обед к назначенному времени без опозданий</li>
-                    <li>Надежно упаковываем блюда в удобные контейнеры бесплатно</li>
-                    <li>Доставляем ланчи весь день с 7:00 до 23:00</li>
-                </ul>
-                <h2>Топ-5 популярных блюд</h2>
-            </section>
+        <section>
+            <h2>Преимущества Food Construct</h2>
+            <ul>
+                <li>Привозим обед к назначенному времени без опозданий</li>
+                <li>Надежно упаковываем блюда в удобные контейнеры бесплатно</li>
+                <li>Доставляем ланчи весь день с 7:00 до 23:00</li>
+            </ul>
+        </section>
 
-            <section>
-                <table>
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Название</th>
-                            <th>Кол-во заказов в неделю</th>
-                            <th>Цена</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Лазанья</td>
-                            <td>185</td>
-                            <td>385&#8381;</td>
-                        </tr>
-
-                        <tr>
-                            <td>2</td>
-                            <td>Том Ям с креветками</td>
-                            <td>161</td>
-                            <td>365&#8381;</td>
-                        </tr>
-
-                        <tr>
-                            <td>3</td>
-                            <td>Норвежский суп</td>
-                            <td>144</td>
-                            <td>270&#8381;</td>
-                        </tr>
-                        
-                        <tr>
-                            <td>4</td>
-                            <td>Жаренная картошка с грибами</td>
-                            <td>132</td>
-                            <td>150&#8381;</td>
-                        </tr>
-
-                        <tr>
-                            <td>5</td>
-                            <td>Котлеты из курицы с картофельным пюре</td>
-                            <td>128</td>
-                            <td>225&#8381;</td>
-                        </tr>
-                                    
-                    </tbody>
-
-                </table>
-            </section>
+        <section>
+            <h2>Топ-5 популярных блюд</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Название</th>
+                        <th>Кол-во заказов в неделю</th>
+                        <th>Цена</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Лазанья</td>
+                        <td>185</td>
+                        <td>385&#8381;</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Том Ям с креветками</td>
+                        <td>161</td>
+                        <td>365&#8381;</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Норвежский суп</td>
+                        <td>144</td>
+                        <td>270&#8381;</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Жаренная картошка с грибами</td>
+                        <td>132</td>
+                        <td>150&#8381;</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Котлеты из курицы с картофельным пюре</td>
+                        <td>128</td>
+                        <td>225&#8381;</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
     </main>
 
-<footer id="contacts">
-    <p class="white-color-for-text">Позвонить нам: <a href="tel:+70000000000" class="link-dark-bg">+7-000-000-00-00</a></p>
-</footer>
-
+    <footer id="contacts">
+        <p class="white-color-for-text">Позвонить нам: <a href="tel:+70000000000" class="link-dark-bg">+7-000-000-00-00</a></p>
+    </footer>
 </body>
+
 </html>
-
-
-
