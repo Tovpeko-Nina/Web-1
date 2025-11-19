@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Construct - Оформление заказа</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="print.css" media="print">
+    <style>
+        .order-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 40px 0;
+        }
+
+        .order-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid tomato;
+        }
+
+        .order-section h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            border-bottom: 3px solid tomato;
+            padding-bottom: 15px;
+        }
+
+        .empty-order {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.3rem;
+        }
+
+        .empty-order a {
+            color: tomato;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .empty-order a:hover {
+            color: #ff4500;
+            text-decoration: underline;
+        }
+
+        .order-items {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 35px;
+            filter: drop-shadow(17px 19px 24px rgba(0, 0, 0, 0.13));
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .order-item:hover {
+            border: 2px solid tomato;
+        }
+
+        .order-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 25px;
+        }
+
+        .order-item-info {
+            flex-grow: 1;
+        }
+
+        .order-item-name {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .order-item-price {
+            color: tomato;
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
+
+        .remove-btn {
+            background-color: #f1eee9;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1rem;
+        }
+
+        .remove-btn:hover {
+            background-color: tomato;
+            color: white;
+        }
+
+        .order-summary {
+            margin-top: 30px;
+            padding: 25px;
+            background-color: #f8f8f8;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .total-price {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: tomato;
+            margin: 0;
+        }
+
+        /* Стили формы */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Roboto Mono', monospace;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: tomato;
+            outline: none;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-weight: normal;
+        }
+
+        .radio-group {
+            margin: 15px 0;
+        }
+
+        .radio-group label {
+            display: inline-flex;
+            align-items: center;
+            font-weight: normal;
+            margin-right: 25px;
+            cursor: pointer;
+        }
+
+        .radio-group input[type="radio"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .back-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-family: 'Roboto Mono', monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .submit-btn {
+            background-color: tomato;
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-family: 'Roboto Mono', monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-grow: 1;
+        }
+
+        .submit-btn:hover {
+            background-color: #ff4500;
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .note {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .delivery-time {
+            margin: 20px 0;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            .order-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .order-section {
+                padding: 20px;
+            }
+            
+            .form-buttons {
+                flex-direction: column;
+            }
+            
+            .form-buttons button,
+            .form-buttons a {
+                width: 100%;
+            }
+            
+            .order-item {
+                flex-direction: column;
+                text-align: center;
+                padding: 15px;
+            }
+            
+            .order-item img {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .order-section {
+                padding: 15px;
+            }
+            
+            .order-section h2 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Food Construct</h1>
+            <nav>
+                <a href="index.html" class="link-light-bg active">Главная</a>
+                <a href="#about" class="link-light-bg">О нас</a>
+                <a href="pack_lunch.html" class="link-light-bg">Собрать ланч</a>
+                <a href="order.html" class="link-light-bg">Оформить заказ</a>
+                <a href="orders.html" class="link-light-bg">Заказы</a> <!-- Добавленная ссылка -->
+                <a href="#contacts" class="link-light-bg">Контакты</a>
+                <a href="feedback.html" class="link-light-bg">Обратная связь</a>
+                <a href="auth.html" class="link-light-bg">Войти</a>
+            </nav>
+    </header>
+
+    <main>
+        <div class="order-container">
+            <!-- Левая колонка: Состав заказа -->
+            <div class="order-section">
+                <h2>Состав заказа</h2>
+                <div id="order-items-container">
+                    <!-- Блюда будут загружены через JavaScript -->
+                </div>
+                <div class="order-summary">
+                    <div class="total-price" id="total-price">Общая стоимость: 0₽</div>
+                </div>
+            </div>
+
+            <!-- Правая колонка: Форма оформления -->
+            <div class="order-section">
+                <h2>Оформление заказа</h2>
+                <form id="order-form">
+                    <div class="form-group">
+                        <label for="full_name">ФИО *</label>
+                        <input type="text" id="full_name" name="full_name" required placeholder="Введите ваше ФИО">
+                        <div class="error-message" id="full_name_error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required placeholder="example@mail.ru">
+                        <div class="error-message" id="email_error"></div>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="subscribe" name="subscribe" value="1" checked>
+                        <label for="subscribe">Получать информацию о скидках и акциях</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Номер телефона *</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="+7 (000) 000-00-00">
+                        <div class="error-message" id="phone_error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="delivery_address">Адрес доставки *</label>
+                        <input type="text" id="delivery_address" name="delivery_address" required placeholder="Улица, дом, квартира">
+                        <p class="note">Доставка осуществляется только по Москве</p>
+                        <div class="error-message" id="delivery_address_error"></div>
+                    </div>
+
+                    <div class="delivery-time">
+                        <label>Тип доставки *</label>
+                        <div class="radio-group">
+                            <input type="radio" id="delivery_now" name="delivery_type" value="now" checked>
+                            <label for="delivery_now">Как можно скорее</label>
+                        </div>
+                        <div class="radio-group">
+                            <input type="radio" id="delivery_by_time" name="delivery_type" value="by_time">
+                            <label for="delivery_by_time">К указанному времени</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="delivery_time">Время доставки</label>
+                        <input type="text" id="delivery_time" name="delivery_time" placeholder="14:30" disabled maxlength="5">
+                        <p class="note">Доступное время доставки с 7:00 до 23:00 с шагом 5 минут</p>
+                        <div class="error-message" id="delivery_time_error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="comment">Комментарий к заказу</label>
+                        <textarea id="comment" name="comment" placeholder="Укажите дополнительные пожелания к заказу..."></textarea>
+                    </div>
+
+                    <!-- Скрытые поля для ID блюд -->
+                    <input type="hidden" id="soup_id" name="soup_id">
+                    <input type="hidden" id="main_course_id" name="main_course_id">
+                    <input type="hidden" id="salad_id" name="salad_id">
+                    <input type="hidden" id="drink_id" name="drink_id">
+                    <input type="hidden" id="dessert_id" name="dessert_id">
+
+                    <div class="form-buttons">
+                        <a href="pack_lunch.html" class="back-btn">Назад к выбору</a>
+                        <button type="submit" class="submit-btn" id="submit-btn" disabled>Отправить заказ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer id="contacts">
+        <p class="white-color-for-text">Позвонить нам: <a href="tel:+70000000000" class="link-dark-bg">+7-000-000-00-00</a></p>
+    </footer>
+
+    <script>
+        // API ключ (нужно заменить на реальный)
+        const API_KEY = '7e752a30-b955-4eac-85de-b8786c610d1f';
+        const API_BASE_URL = 'https://edu.std-900.ist.mospolytech.ru/labs/api';
+
+        let allDishes = [];
+
+        // Функция для получения данных из localStorage
+        function getOrderFromStorage() {
+            const orderData = localStorage.getItem('foodConstructOrder');
+            return orderData ? JSON.parse(orderData) : {
+                soup: null,
+                main: null,
+                starter: null,
+                drink: null,
+                dessert: null
+            };
+        }
+
+        // Функция для сохранения данных в localStorage
+        function saveOrderToStorage(order) {
+            localStorage.setItem('foodConstructOrder', JSON.stringify(order));
+        }
+
+        // Функция для удаления заказа из localStorage
+        function clearOrderFromStorage() {
+            localStorage.removeItem('foodConstructOrder');
+        }
+
+        // Функция для загрузки всех блюд
+        async function loadAllDishes() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/dishes?api_key=${API_KEY}`);
+                if (!response.ok) throw new Error('Ошибка загрузки блюд');
+                const data = await response.json();
+                console.log('Загружены блюда:', data);
+                return data;
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showError('Ошибка загрузки меню');
+                return [];
+            }
+        }
+
+        // Функция для отображения состава заказа
+        async function displayOrderItems() {
+            const container = document.getElementById('order-items-container');
+            const totalPriceElement = document.getElementById('total-price');
+            const submitBtn = document.getElementById('submit-btn');
+            const order = getOrderFromStorage();
+            
+            // Проверяем, есть ли выбранные блюда
+            const hasItems = Object.values(order).some(item => item !== null);
+            
+            if (!hasItems) {
+                container.innerHTML = `
+                    <div class="empty-order">
+                        <p>Ничего не выбрано. Чтобы добавить блюда в заказ, перейдите на страницу <a href="pack_lunch.html">Собрать ланч</a>.</p>
+                    </div>
+                `;
+                totalPriceElement.textContent = 'Общая стоимость: 0₽';
+                updateFormFields({});
+                submitBtn.disabled = true;
+                return;
+            }
+
+            let totalPrice = 0;
+            let html = '<div class="order-items">';
+
+            // Загружаем и отображаем каждое блюдо
+            for (const [category, dishId] of Object.entries(order)) {
+                if (dishId) {
+                    const dish = allDishes.find(d => d.id === dishId);
+                    if (dish) {
+                        totalPrice += dish.price;
+                        html += `
+                            <div class="order-item" data-category="${category}" data-dish-id="${dishId}">
+                                <img src="${dish.image}" alt="${dish.name}" onerror="this.src='https://via.placeholder.com/100'">
+                                <div class="order-item-info">
+                                    <div class="order-item-name">${dish.name}</div>
+                                    <div class="order-item-price">${dish.price}₽</div>
+                                </div>
+                                <button type="button" class="remove-btn" onclick="removeFromOrder('${category}')">Удалить</button>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
+            html += '</div>';
+            container.innerHTML = html;
+            totalPriceElement.textContent = `Общая стоимость: ${totalPrice}₽`;
+
+            // Обновляем скрытые поля формы
+            updateFormFields(order);
+            
+            // Проверяем валидность заказа и активируем кнопку
+            const isValid = validateOrderCombo(order);
+            submitBtn.disabled = !isValid;
+        }
+
+        // Функция для удаления блюда из заказа
+        function removeFromOrder(category) {
+            const order = getOrderFromStorage();
+            order[category] = null;
+            saveOrderToStorage(order);
+            displayOrderItems();
+        }
+
+        // Функция для обновления скрытых полей формы
+        function updateFormFields(order) {
+            document.getElementById('soup_id').value = order.soup || '';
+            document.getElementById('main_course_id').value = order.main || '';
+            document.getElementById('salad_id').value = order.starter || '';
+            document.getElementById('drink_id').value = order.drink || '';
+            document.getElementById('dessert_id').value = order.dessert || '';
+        }
+
+        // Функция для проверки соответствия комбо
+        function validateOrderCombo(order) {
+            const validCombinations = [
+                ['soup', 'main', 'starter', 'drink'],
+                ['soup', 'main', 'drink'],
+                ['soup', 'starter', 'drink'],
+                ['main', 'starter', 'drink'],
+                ['main', 'drink']
+            ];
+
+            return validCombinations.some(combo => {
+                return combo.every(category => order[category]);
+            });
+        }
+
+        // Функция для преобразования времени из формата HH:MM в HHMM
+        function formatTimeForAPI(timeString) {
+            if (!timeString) return '';
+            // Убираем двоеточие и возвращаем 4 цифры
+            return timeString.replace(':', '');
+        }
+
+        // Функция для валидации времени доставки в формате HH:MM
+        function validateDeliveryTime(timeString, deliveryType) {
+            if (deliveryType === 'by_time' && !timeString) {
+                return 'Укажите время доставки';
+            }
+
+            if (timeString) {
+                // Проверка формата HH:MM
+                if (!/^\d{2}:\d{2}$/.test(timeString)) {
+                    return 'Время должно быть в формате HH:MM (например: 14:30)';
+                }
+
+                const [hoursStr, minutesStr] = timeString.split(':');
+                const hours = parseInt(hoursStr);
+                const minutes = parseInt(minutesStr);
+
+                // Проверка допустимых значений часов
+                if (hours < 7 || hours > 23) {
+                    return 'Время доставки с 07:00 до 23:00';
+                }
+
+                // Проверка допустимых значений минут
+                if (minutes < 0 || minutes > 59) {
+                    return 'Минуты должны быть от 00 до 59';
+                }
+
+                // Проверка шага 5 минут
+                if (minutes % 5 !== 0) {
+                    return 'Время должно быть кратно 5 минутам (например: 14:00, 14:05, 14:10)';
+                }
+
+                // Проверка что время не раньше текущего
+                const now = new Date();
+                const deliveryTime = new Date();
+                deliveryTime.setHours(hours, minutes, 0, 0);
+
+                if (deliveryTime < now) {
+                    return 'Время доставки не может быть раньше текущего времени';
+                }
+
+                // Проверка верхней границы (23:00)
+                if (hours === 23 && minutes > 0) {
+                    return 'Время доставки до 23:00';
+                }
+            }
+
+            return null;
+        }
+
+        // Функция для валидации всей формы
+        function validateForm() {
+            const form = document.getElementById('order-form');
+            const formData = new FormData(form);
+            let isValid = true;
+
+            // Сбрасываем ошибки
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+                el.textContent = '';
+            });
+
+            // Проверка обязательных полей
+            const requiredFields = ['full_name', 'email', 'phone', 'delivery_address'];
+            requiredFields.forEach(field => {
+                const value = formData.get(field);
+                if (!value || value.trim() === '') {
+                    showFieldError(field + '_error', 'Это поле обязательно для заполнения');
+                    isValid = false;
+                }
+            });
+
+            // Проверка email
+            const email = formData.get('email');
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showFieldError('email_error', 'Введите корректный email адрес');
+                isValid = false;
+            }
+
+            // Проверка времени доставки
+            const deliveryType = formData.get('delivery_type');
+            const deliveryTime = formData.get('delivery_time');
+            const timeError = validateDeliveryTime(deliveryTime, deliveryType);
+            if (timeError) {
+                showFieldError('delivery_time_error', timeError);
+                isValid = false;
+            }
+
+            // Проверка состава заказа
+            const order = getOrderFromStorage();
+            if (!validateOrderCombo(order)) {
+                isValid = false;
+            }
+
+            // Активируем/деактивируем кнопку отправки
+            document.getElementById('submit-btn').disabled = !isValid;
+
+            return isValid;
+        }
+
+        // Функция для показа ошибки поля
+        function showFieldError(fieldId, message) {
+            const errorElement = document.getElementById(fieldId);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        // Функция для показа общей ошибки
+        function showError(message) {
+            alert(message);
+        }
+
+        // Функция для отправки заказа на сервер
+        async function submitOrder(orderData) {
+            try {
+                console.log('Отправка данных:', orderData);
+
+                const response = await fetch(`${API_BASE_URL}/orders?api_key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                const responseData = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(responseData.error || `Ошибка сервера: ${response.status}`);
+                }
+
+                console.log('Заказ создан:', responseData);
+                return responseData;
+
+            } catch (error) {
+                console.error('Ошибка при оформлении заказа:', error);
+                throw error;
+            }
+        }
+
+        // Обработчик отправки формы
+        document.getElementById('order-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                showError('Пожалуйста, исправьте ошибки в форме');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Отправка...';
+
+            try {
+                // Собираем данные формы
+                const formData = new FormData(this);
+                const orderData = {};
+                
+                // Преобразуем FormData в объект
+                for (const [key, value] of formData.entries()) {
+                    if (value) {
+                        if (key === 'subscribe') {
+                            orderData[key] = value === '1' ? 1 : 0;
+                        } else if (key === 'soup_id' || key === 'main_course_id' || key === 'salad_id' || key === 'drink_id' || key === 'dessert_id') {
+                            orderData[key] = value ? parseInt(value) : null;
+                        } else if (key === 'delivery_time') {
+                            // Преобразуем время из HH:MM в HHMM для API
+                            orderData[key] = formatTimeForAPI(value);
+                        } else {
+                            orderData[key] = value;
+                        }
+                    }
+                }
+
+                // Удаляем пустые ID блюд
+                ['soup_id', 'main_course_id', 'salad_id', 'dessert_id'].forEach(field => {
+                    if (!orderData[field]) delete orderData[field];
+                });
+
+                // Отправляем заказ
+                const result = await submitOrder(orderData);
+                
+                // Очищаем localStorage после успешного оформления
+                clearOrderFromStorage();
+                
+                alert('Заказ успешно оформлен! Номер заказа: ' + (result.id || 'неизвестен'));
+                window.location.href = 'index.html';
+                
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showError(`Ошибка при оформлении заказа: ${error.message}`);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Отправить заказ';
+            }
+        });
+
+        // Обработчик изменения типа доставки
+        document.querySelectorAll('input[name="delivery_type"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const timeInput = document.getElementById('delivery_time');
+                const timeError = document.getElementById('delivery_time_error');
+                
+                timeInput.disabled = this.value !== 'by_time';
+                timeInput.required = this.value === 'by_time';
+                
+                if (this.value !== 'by_time') {
+                    timeInput.value = '';
+                    timeError.style.display = 'none';
+                }
+                
+                validateForm();
+            });
+        });
+
+        // Валидация при вводе данных
+        document.querySelectorAll('#order-form input, #order-form textarea').forEach(input => {
+            input.addEventListener('input', validateForm);
+            input.addEventListener('change', validateForm);
+        });
+
+        // Автоматическое добавление двоеточия при вводе времени
+        document.getElementById('delivery_time').addEventListener('input', function(e) {
+            let value = this.value.replace(/\D/g, ''); // Удаляем все не-цифры
+            
+            if (value.length >= 2) {
+                // Вставляем двоеточие после первых двух цифр
+                value = value.substring(0, 2) + ':' + value.substring(2, 4);
+            }
+            
+            this.value = value;
+            validateForm();
+        });
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Загружаем все блюда
+            allDishes = await loadAllDishes();
+            displayOrderItems();
+            
+            // Первоначальная валидация формы
+            validateForm();
+        });
+    </script>
+</body>
+</html>

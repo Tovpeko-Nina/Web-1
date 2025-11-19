@@ -1,0 +1,920 @@
+<!-- orders.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Construct - История заказов</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="print.css" media="print">
+    <style>
+        .orders-container {
+            margin: 40px 0;
+        }
+        
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .orders-table th,
+        .orders-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .orders-table th {
+            background-color: #f8f8f8;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .orders-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #666;
+            transition: color 0.3s;
+            padding: 5px;
+        }
+        
+        .action-btn:hover {
+            color: tomato;
+        }
+        
+        .empty-orders {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.3rem;
+        }
+        
+        /* Модальные окна */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1001;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin: 0;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .close-btn:hover {
+            color: tomato;
+        }
+        
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 1rem;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: tomato;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #ff4500;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .order-detail-group {
+            margin-bottom: 1rem;
+        }
+        
+        .order-detail-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .order-detail-value {
+            margin-left: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .radio-group {
+            margin: 10px 0;
+        }
+        
+        .radio-group label {
+            display: inline-flex;
+            align-items: center;
+            font-weight: normal;
+            margin-right: 20px;
+        }
+        
+        .radio-group input[type="radio"] {
+            margin-right: 8px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            z-index: 1002;
+            display: none;
+            max-width: 300px;
+        }
+        
+        .notification.success {
+            background-color: #28a745;
+        }
+        
+        .notification.error {
+            background-color: #dc3545;
+        }
+        
+        @media (max-width: 768px) {
+            .orders-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Food Construct</h1>
+        <nav>
+            <a href="index.html" class="link-light-bg">Главная</a>
+            <a href="index.html#about" class="link-light-bg">О нас</a>
+            <a href="pack_lunch.html" class="link-light-bg">Собрать ланч</a>
+            <a href="order.html" class="link-light-bg">Оформить заказ</a>
+            <a href="orders.html" class="link-light-bg active">Заказы</a>
+            <a href="index.html#contacts" class="link-light-bg">Контакты</a>
+            <a href="feedback.html" class="link-light-bg">Обратная связь</a>
+            <a href="auth.html" class="link-light-bg">Войти</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="orders-container">
+            <h2>История заказов</h2>
+            <div id="orders-table-container">
+                <!-- Таблица заказов будет загружена через JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <footer id="contacts">
+        <p class="white-color-for-text">Позвонить нам: <a href="tel:+70000000000" class="link-dark-bg">+7-000-000-00-00</a></p>
+    </footer>
+
+    <!-- Модальное окно просмотра заказа -->
+    <div class="modal-overlay" id="view-order-overlay"></div>
+    <div class="modal" id="view-order-modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Просмотр заказа</h3>
+            <button class="close-btn" id="close-view-modal">&times;</button>
+        </div>
+        <div class="modal-body" id="view-order-body">
+            <!-- Содержимое будет заполнено через JavaScript -->
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" id="close-view-btn">Ок</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно редактирования заказа -->
+    <div class="modal-overlay" id="edit-order-overlay"></div>
+    <div class="modal" id="edit-order-modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Редактирование заказа</h3>
+            <button class="close-btn" id="close-edit-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="edit-order-form">
+                <input type="hidden" id="edit-order-id">
+                
+                <div class="form-group">
+                    <label for="edit-full-name">ФИО *</label>
+                    <input type="text" id="edit-full-name" name="full_name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-email">Email *</label>
+                    <input type="email" id="edit-email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-phone">Телефон *</label>
+                    <input type="tel" id="edit-phone" name="phone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-delivery-address">Адрес доставки *</label>
+                    <input type="text" id="edit-delivery-address" name="delivery_address" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Тип доставки *</label>
+                    <div class="radio-group">
+                        <input type="radio" id="edit-delivery-now" name="delivery_type" value="now">
+                        <label for="edit-delivery-now">Как можно скорее</label>
+                    </div>
+                    <div class="radio-group">
+                        <input type="radio" id="edit-delivery-by-time" name="delivery_type" value="by_time">
+                        <label for="edit-delivery-by-time">К указанному времени</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-delivery-time">Время доставки</label>
+                    <input type="text" id="edit-delivery-time" name="delivery_time" placeholder="HH:MM" disabled>
+                    <small>Доступное время доставки с 07:00 до 23:00 с шагом 5 минут</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-comment">Комментарий</label>
+                    <textarea id="edit-comment" name="comment"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="cancel-edit-btn">Отмена</button>
+            <button class="btn btn-primary" id="save-edit-btn">Сохранить</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно удаления заказа -->
+    <div class="modal-overlay" id="delete-order-overlay"></div>
+    <div class="modal" id="delete-order-modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Удаление заказа</h3>
+            <button class="close-btn" id="close-delete-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Вы уверены, что хотите удалить заказ?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="cancel-delete-btn">Отмена</button>
+            <button class="btn btn-danger" id="confirm-delete-btn">Да</button>
+        </div>
+    </div>
+
+    <!-- Уведомления -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // API конфигурация
+        const API_KEY = '7e752a30-b955-4eac-85de-b8786c610d1f';
+        const API_BASE_URL = 'https://edu.std-900.ist.mospolytech.ru/labs/api';
+        
+        let allOrders = [];
+        let allDishes = [];
+        let currentOrderId = null;
+        
+        // Функция для загрузки всех заказов
+        async function loadOrders() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/orders?api_key=${API_KEY}`);
+                if (!response.ok) throw new Error('Ошибка загрузки заказов');
+                const data = await response.json();
+                console.log('Загружены заказы:', data);
+                
+                // Сортируем заказы по дате создания (новые сначала)
+                allOrders = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                return allOrders;
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showNotification('Ошибка загрузки заказов', 'error');
+                return [];
+            }
+        }
+        
+        // Функция для загрузки всех блюд
+        async function loadDishes() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/dishes?api_key=${API_KEY}`);
+                if (!response.ok) throw new Error('Ошибка загрузки блюд');
+                const data = await response.json();
+                allDishes = data;
+                return allDishes;
+            } catch (error) {
+                console.error('Ошибка:', error);
+                return [];
+            }
+        }
+        
+        // Функция для отображения таблицы заказов
+        function displayOrdersTable(orders) {
+            const container = document.getElementById('orders-table-container');
+            
+            if (!orders || orders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-orders">
+                        <p>У вас пока нет заказов. Оформите первый заказ на странице <a href="order.html">Оформить заказ</a>.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Дата оформления</th>
+                            <th>Состав заказа</th>
+                            <th>Стоимость</th>
+                            <th>Время доставки</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            orders.forEach((order, index) => {
+                const orderDate = new Date(order.created_at);
+                const formattedDate = `${orderDate.getDate().toString().padStart(2, '0')}.${(orderDate.getMonth() + 1).toString().padStart(2, '0')}.${orderDate.getFullYear()} ${orderDate.getHours().toString().padStart(2, '0')}:${orderDate.getMinutes().toString().padStart(2, '0')}`;
+                
+                // Получаем названия блюд
+                const dishNames = getDishNames(order);
+                
+                // Форматируем стоимость
+                const totalPrice = calculateTotalPrice(order);
+                
+                // Форматируем время доставки
+                const deliveryTime = formatDeliveryTime(order);
+                
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${formattedDate}</td>
+                        <td>${dishNames.join(', ')}</td>
+                        <td>${totalPrice}₽</td>
+                        <td>${deliveryTime}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view-btn" data-order-id="${order.id}" title="Подробнее">👁️</button>
+                                <button class="action-btn edit-btn" data-order-id="${order.id}" title="Редактировать">✏️</button>
+                                <button class="action-btn delete-btn" data-order-id="${order.id}" title="Удалить">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+            
+            // Добавляем обработчики событий для кнопок
+            addEventListeners();
+        }
+        
+        // Функция для получения названий блюд из заказа
+        function getDishNames(order) {
+            const dishNames = [];
+            
+            if (order.soup_id) {
+                const soup = allDishes.find(d => d.id === order.soup_id);
+                if (soup) dishNames.push(soup.name);
+            }
+            
+            if (order.main_course_id) {
+                const main = allDishes.find(d => d.id === order.main_course_id);
+                if (main) dishNames.push(main.name);
+            }
+            
+            if (order.salad_id) {
+                const salad = allDishes.find(d => d.id === order.salad_id);
+                if (salad) dishNames.push(salad.name);
+            }
+            
+            if (order.drink_id) {
+                const drink = allDishes.find(d => d.id === order.drink_id);
+                if (drink) dishNames.push(drink.name);
+            }
+            
+            if (order.dessert_id) {
+                const dessert = allDishes.find(d => d.id === order.dessert_id);
+                if (dessert) dishNames.push(dessert.name);
+            }
+            
+            return dishNames;
+        }
+        
+        // Функция для расчета общей стоимости заказа
+        function calculateTotalPrice(order) {
+            let total = 0;
+            
+            if (order.soup_id) {
+                const soup = allDishes.find(d => d.id === order.soup_id);
+                if (soup) total += soup.price;
+            }
+            
+            if (order.main_course_id) {
+                const main = allDishes.find(d => d.id === order.main_course_id);
+                if (main) total += main.price;
+            }
+            
+            if (order.salad_id) {
+                const salad = allDishes.find(d => d.id === order.salad_id);
+                if (salad) total += salad.price;
+            }
+            
+            if (order.drink_id) {
+                const drink = allDishes.find(d => d.id === order.drink_id);
+                if (drink) total += drink.price;
+            }
+            
+            if (order.dessert_id) {
+                const dessert = allDishes.find(d => d.id === order.dessert_id);
+                if (dessert) total += dessert.price;
+            }
+            
+            return total;
+        }
+        
+        // Функция для форматирования времени доставки
+        function formatDeliveryTime(order) {
+            if (order.delivery_type === 'now') {
+                return 'Как можно скорее (с 07:00 до 23:00)';
+            } else if (order.delivery_type === 'by_time' && order.delivery_time) {
+                // Форматируем время из формата HHMM в HH:MM
+                const timeStr = order.delivery_time.toString().padStart(4, '0');
+                return `${timeStr.substring(0, 2)}:${timeStr.substring(2)}`;
+            }
+            return 'Не указано';
+        }
+        
+        // Функция для добавления обработчиков событий
+        function addEventListeners() {
+            // Кнопки просмотра
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const orderId = parseInt(this.getAttribute('data-order-id'));
+                    openViewModal(orderId);
+                });
+            });
+            
+            // Кнопки редактирования
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const orderId = parseInt(this.getAttribute('data-order-id'));
+                    openEditModal(orderId);
+                });
+            });
+            
+            // Кнопки удаления
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const orderId = parseInt(this.getAttribute('data-order-id'));
+                    openDeleteModal(orderId);
+                });
+            });
+        }
+        
+        // Функция для открытия модального окна просмотра
+        function openViewModal(orderId) {
+            const order = allOrders.find(o => o.id === orderId);
+            if (!order) return;
+            
+            const modalBody = document.getElementById('view-order-body');
+            const dishNames = getDishNames(order);
+            const totalPrice = calculateTotalPrice(order);
+            const deliveryTime = formatDeliveryTime(order);
+            
+            const orderDate = new Date(order.created_at);
+            const formattedDate = `${orderDate.getDate().toString().padStart(2, '0')}.${(orderDate.getMonth() + 1).toString().padStart(2, '0')}.${orderDate.getFullYear()} ${orderDate.getHours().toString().padStart(2, '0')}:${orderDate.getMinutes().toString().padStart(2, '0')}`;
+            
+            modalBody.innerHTML = `
+                <div class="order-detail-group">
+                    <div class="order-detail-label">Дата оформления:</div>
+                    <div class="order-detail-value">${formattedDate}</div>
+                </div>
+                
+                <div class="order-detail-group">
+                    <div class="order-detail-label">Доставка:</div>
+                    <div class="order-detail-value">
+                        <div><strong>Имя получателя:</strong> ${order.full_name}</div>
+                        <div><strong>Адрес доставки:</strong> ${order.delivery_address}</div>
+                        <div><strong>Время доставки:</strong> ${deliveryTime}</div>
+                        <div><strong>Телефон:</strong> ${order.phone}</div>
+                        <div><strong>Email:</strong> ${order.email}</div>
+                    </div>
+                </div>
+                
+                ${order.comment ? `
+                <div class="order-detail-group">
+                    <div class="order-detail-label">Комментарий:</div>
+                    <div class="order-detail-value">${order.comment}</div>
+                </div>
+                ` : ''}
+                
+                <div class="order-detail-group">
+                    <div class="order-detail-label">Состав заказа:</div>
+                    <div class="order-detail-value">
+                        ${dishNames.map(name => `<div>${name}</div>`).join('')}
+                    </div>
+                </div>
+                
+                <div class="order-detail-group">
+                    <div class="order-detail-label">Стоимость:</div>
+                    <div class="order-detail-value">${totalPrice}₽</div>
+                </div>
+            `;
+            
+            document.getElementById('view-order-overlay').style.display = 'block';
+            document.getElementById('view-order-modal').style.display = 'block';
+        }
+        
+        // Функция для открытия модального окна редактирования
+        function openEditModal(orderId) {
+            const order = allOrders.find(o => o.id === orderId);
+            if (!order) return;
+            
+            currentOrderId = orderId;
+            
+            // Заполняем форму данными заказа
+            document.getElementById('edit-order-id').value = order.id;
+            document.getElementById('edit-full-name').value = order.full_name;
+            document.getElementById('edit-email').value = order.email;
+            document.getElementById('edit-phone').value = order.phone;
+            document.getElementById('edit-delivery-address').value = order.delivery_address;
+            
+            // Устанавливаем тип доставки
+            if (order.delivery_type === 'now') {
+                document.getElementById('edit-delivery-now').checked = true;
+                document.getElementById('edit-delivery-time').disabled = true;
+            } else {
+                document.getElementById('edit-delivery-by-time').checked = true;
+                document.getElementById('edit-delivery-time').disabled = false;
+                
+                // Форматируем время из HHMM в HH:MM
+                if (order.delivery_time) {
+                    const timeStr = order.delivery_time.toString().padStart(4, '0');
+                    document.getElementById('edit-delivery-time').value = `${timeStr.substring(0, 2)}:${timeStr.substring(2)}`;
+                }
+            }
+            
+            document.getElementById('edit-comment').value = order.comment || '';
+            
+            document.getElementById('edit-order-overlay').style.display = 'block';
+            document.getElementById('edit-order-modal').style.display = 'block';
+        }
+        
+        // Функция для открытия модального окна удаления
+        function openDeleteModal(orderId) {
+            currentOrderId = orderId;
+            document.getElementById('delete-order-overlay').style.display = 'block';
+            document.getElementById('delete-order-modal').style.display = 'block';
+        }
+        
+        // Функция для закрытия всех модальных окон
+        function closeAllModals() {
+            document.querySelectorAll('.modal-overlay, .modal').forEach(el => {
+                el.style.display = 'none';
+            });
+            currentOrderId = null;
+        }
+        
+        // Функция для обновления заказа
+        async function updateOrder(orderId, orderData) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/orders/${orderId}?api_key=${API_KEY}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(orderData)
+                });
+                
+                const responseData = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(responseData.error || `Ошибка сервера: ${response.status}`);
+                }
+                
+                console.log('Заказ обновлен:', responseData);
+                return responseData;
+            } catch (error) {
+                console.error('Ошибка при обновлении заказа:', error);
+                throw error;
+            }
+        }
+        
+        // Функция для удаления заказа
+        async function deleteOrder(orderId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/orders/${orderId}?api_key=${API_KEY}`, {
+                    method: 'DELETE'
+                });
+                
+                const responseData = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(responseData.error || `Ошибка сервера: ${response.status}`);
+                }
+                
+                console.log('Заказ удален:', responseData);
+                return responseData;
+            } catch (error) {
+                console.error('Ошибка при удалении заказа:', error);
+                throw error;
+            }
+        }
+        
+        // Функция для показа уведомления
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Функция для валидации времени доставки
+        function validateDeliveryTime(timeString, deliveryType) {
+            if (deliveryType === 'by_time' && !timeString) {
+                return 'Укажите время доставки';
+            }
+            
+            if (timeString) {
+                // Проверка формата HH:MM
+                if (!/^\d{2}:\d{2}$/.test(timeString)) {
+                    return 'Время должно быть в формате HH:MM (например: 14:30)';
+                }
+                
+                const [hoursStr, minutesStr] = timeString.split(':');
+                const hours = parseInt(hoursStr);
+                const minutes = parseInt(minutesStr);
+                
+                // Проверка допустимых значений часов
+                if (hours < 7 || hours > 23) {
+                    return 'Время доставки с 07:00 до 23:00';
+                }
+                
+                // Проверка допустимых значений минут
+                if (minutes < 0 || minutes > 59) {
+                    return 'Минуты должны быть от 00 до 59';
+                }
+                
+                // Проверка шага 5 минут
+                if (minutes % 5 !== 0) {
+                    return 'Время должно быть кратно 5 минутам (например: 14:00, 14:05, 14:10)';
+                }
+                
+                // Проверка что время не раньше текущего
+                const now = new Date();
+                const deliveryTime = new Date();
+                deliveryTime.setHours(hours, minutes, 0, 0);
+                
+                if (deliveryTime < now) {
+                    return 'Время доставки не может быть раньше текущего времени';
+                }
+                
+                // Проверка верхней границы (23:00)
+                if (hours === 23 && minutes > 0) {
+                    return 'Время доставки до 23:00';
+                }
+            }
+            
+            return null;
+        }
+        
+        // Функция для преобразования времени из формата HH:MM в HHMM
+        function formatTimeForAPI(timeString) {
+            if (!timeString) return '';
+            // Убираем двоеточие и возвращаем 4 цифры
+            return timeString.replace(':', '');
+        }
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Загружаем блюда и заказы
+            await loadDishes();
+            const orders = await loadOrders();
+            displayOrdersTable(orders);
+            
+            // Обработчики для модального окна просмотра
+            document.getElementById('close-view-modal').addEventListener('click', closeAllModals);
+            document.getElementById('close-view-btn').addEventListener('click', closeAllModals);
+            document.getElementById('view-order-overlay').addEventListener('click', closeAllModals);
+            
+            // Обработчики для модального окна редактирования
+            document.getElementById('close-edit-modal').addEventListener('click', closeAllModals);
+            document.getElementById('cancel-edit-btn').addEventListener('click', closeAllModals);
+            document.getElementById('edit-order-overlay').addEventListener('click', closeAllModals);
+            
+            // Обработчики для модального окна удаления
+            document.getElementById('close-delete-modal').addEventListener('click', closeAllModals);
+            document.getElementById('cancel-delete-btn').addEventListener('click', closeAllModals);
+            document.getElementById('delete-order-overlay').addEventListener('click', closeAllModals);
+            
+            // Обработчик изменения типа доставки в форме редактирования
+            document.querySelectorAll('input[name="delivery_type"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const timeInput = document.getElementById('edit-delivery-time');
+                    timeInput.disabled = this.value !== 'by_time';
+                    timeInput.required = this.value === 'by_time';
+                    
+                    if (this.value !== 'by_time') {
+                        timeInput.value = '';
+                    }
+                });
+            });
+            
+            // Автоматическое добавление двоеточия при вводе времени
+            document.getElementById('edit-delivery-time').addEventListener('input', function(e) {
+                let value = this.value.replace(/\D/g, ''); // Удаляем все не-цифры
+                
+                if (value.length >= 2) {
+                    // Вставляем двоеточие после первых двух цифр
+                    value = value.substring(0, 2) + ':' + value.substring(2, 4);
+                }
+                
+                this.value = value;
+            });
+            
+            // Обработчик сохранения изменений
+            document.getElementById('save-edit-btn').addEventListener('click', async function() {
+                const form = document.getElementById('edit-order-form');
+                const formData = new FormData(form);
+                
+                // Собираем данные формы
+                const orderData = {};
+                for (const [key, value] of formData.entries()) {
+                    if (value) {
+                        if (key === 'delivery_time') {
+                            // Преобразуем время из HH:MM в HHMM для API
+                            orderData[key] = formatTimeForAPI(value);
+                        } else {
+                            orderData[key] = value;
+                        }
+                    }
+                }
+                
+                // Валидация времени доставки
+                const deliveryType = formData.get('delivery_type');
+                const deliveryTime = formData.get('delivery_time');
+                const timeError = validateDeliveryTime(deliveryTime, deliveryType);
+                
+                if (timeError) {
+                    showNotification(timeError, 'error');
+                    return;
+                }
+                
+                // Отправляем запрос на обновление
+                try {
+                    await updateOrder(currentOrderId, orderData);
+                    showNotification('Заказ успешно изменён');
+                    closeAllModals();
+                    
+                    // Обновляем список заказов
+                    const orders = await loadOrders();
+                    displayOrdersTable(orders);
+                } catch (error) {
+                    showNotification(`Ошибка при изменении заказа: ${error.message}`, 'error');
+                }
+            });
+            
+            // Обработчик подтверждения удаления
+            document.getElementById('confirm-delete-btn').addEventListener('click', async function() {
+                try {
+                    await deleteOrder(currentOrderId);
+                    showNotification('Заказ успешно удалён');
+                    closeAllModals();
+                    
+                    // Обновляем список заказов
+                    const orders = await loadOrders();
+                    displayOrdersTable(orders);
+                } catch (error) {
+                    showNotification(`Ошибка при удалении заказа: ${error.message}`, 'error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

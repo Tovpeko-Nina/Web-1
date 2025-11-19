@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Food Construct</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="print.css" media="print">
+    <style>
+        .form-section {
+            margin: 40px 0;
+            padding: 30px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 0 15px gray;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .radio-group, .checkbox-group {
+            margin: 10px 0;
+        }
+        
+        .radio-group label, .checkbox-group label {
+            display: inline;
+            font-weight: normal;
+            margin-left: 5px;
+        }
+        
+        button {
+            background-color: orange;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #FF8243;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: orange;
+            text-decoration: none;
+        }
+        
+    </style>
+</head>
+<body>
+    <header>
+        <h1> Food Construct </h1>
+            <nav>
+                <a href="index.html" class="link-light-bg active">Главная</a>
+                <a href="#about" class="link-light-bg">О нас</a>
+                <a href="pack_lunch.html" class="link-light-bg">Собрать ланч</a>
+                <a href="order.html" class="link-light-bg">Оформить заказ</a>
+                <a href="orders.html" class="link-light-bg">Заказы</a> <!-- Добавленная ссылка -->
+                <a href="#contacts" class="link-light-bg">Контакты</a>
+                <a href="feedback.html" class="link-light-bg">Обратная связь</a>
+                <a href="auth.html" class="link-light-bg">Войти</a>
+            </nav>
+    </header>
+
+    <main>
+        <section class="form-section">
+            <h2>Форма обратной связи</h2>
+            <form action="https://httpbin.org/post" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="fullname">ФИО:</label>
+                    <input type="text" id="fullname" name="fullname" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Откуда узнали о нас:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="source-internet" name="source" value="internet" required>
+                        <label for="source-internet">Интернет</label>
+                    </div>
+                    <div class="radio-group">
+                        <input type="radio" id="source-friends" name="source" value="friends">
+                        <label for="source-friends">От друзей</label>
+                    </div>
+                    <div class="radio-group">
+                        <input type="radio" id="source-ads" name="source" value="ads">
+                        <label for="source-ads">Реклама</label>
+                    </div>
+                    <div class="radio-group">
+                        <input type="radio" id="source-other" name="source" value="other">
+                        <label for="source-other">Другое</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="request-type">Тип обращения:</label>
+                    <select id="request-type" name="request_type" required>
+                        <option value="">-- Выберите тип --</option>
+                        <option value="complaint">Жалоба</option>
+                        <option value="suggestion">Предложение</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Текст сообщения:</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="attachment">Вложения:</label>
+                    <input type="file" id="attachment" name="attachment">
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="consent" name="consent" required>
+                    <label for="consent">Даю согласие на обработку персональных данных</label>
+                </div>
+                
+                <button type="submit">Отправить</button>
+            </form>
+            
+            <a href="index.html" class="back-link">Вернуться на главную</a>
+        </section>
+    </main>
+
+    <footer id="contacts">
+        <p class="white-color-for-text">Позвонить нам: <a href="tel:+70000000000" class="link-dark-bg">+7-000-000-00-00</a></p>
+    </footer>
+</body>
+</html>
