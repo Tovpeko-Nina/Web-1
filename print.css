@@ -1,0 +1,118 @@
+/* Стили для печати */
+
+@media print {
+    /* Скрыть ненужные элементы */
+    header, 
+    nav, 
+    button,
+    .back-link,
+    #auth-background {
+        display: none !important;
+    }
+    
+    /* Установить черный текст на белом фоне */
+    body {
+        background: white !important;
+        color: black !important;
+        font-size: 12pt;
+        line-height: 1.4;
+        display: block;
+    }
+    
+    /* Убрать тени и границы */
+    .form-section,
+    #auth-form-container,
+    .dish-item {
+        box-shadow: none !important;
+        filter: none !important;
+        border: 1px solid #ddd !important;
+        background: white !important;
+    }
+    
+    /* Убрать отступы и установить удобные для печати */
+    main {
+        padding: 0 !important;
+        margin: 0 !important;
+        display: block;
+    }
+    
+    section {
+        margin: 20px 0 !important;
+        page-break-inside: avoid;
+    }
+    
+    /* Установить удобные размеры шрифтов для печати */
+    h1, h2, h3 {
+        color: black !important;
+        page-break-after: avoid;
+    }
+    
+    /* Убрать ссылки или показать их адреса */
+    a:after {
+        content: " (" attr(href) ")";
+        font-size: 10pt;
+    }
+    
+    a[href^="#"]:after,
+    a[href^="tel:"]:after {
+        content: "";
+    }
+    
+    /* Установить правильные отступы для таблиц */
+    table {
+        width: 100% !important;
+        font-size: 10pt !important;
+        page-break-inside: avoid;
+    }
+    
+    th, td {
+        border: 1px solid #000 !important;
+        padding: 4px 8px !important;
+    }
+    
+    /* Установить правильные размеры изображений */
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+    
+    /* Убрать футер или оставить только контактную информацию */
+    footer {
+        background: white !important;
+        color: black !important;
+        border-top: 1px solid #000;
+        margin-top: 20px;
+        padding: 10px !important;
+        position: static;
+    }
+    
+    .white-color-for-text {
+        color: black !important;
+    }
+    
+    .link-dark-bg {
+        color: black !important;
+    }
+    
+    /* Стили для карточек блюд при печати */
+    .dish-item {
+        padding: 10px !important;
+        margin: 5px 0 !important;
+        break-inside: avoid;
+    }
+    
+    .dish-item img {
+        border-radius: 0 !important;
+    }
+    
+    .price {
+        font-weight: bold;
+        font-size: 14pt !important;
+    }
+    
+    /* Стили для форм при печати */
+    input, select, textarea {
+        border: 1px solid #000 !important;
+        background: white !important;
+    }
+}

@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Construct - Собрать ланч</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="print.css" media="print">
+    <script src="dishes.js"></script>
+    <script src="menu.js"></script>
+    <style>
+        /* Стили для блока с вариантами ланча */
+        .combo-section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background-color: white;
+            border-radius: 15px;
+        }
+
+        .combo-section h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            border-bottom: 3px solid tomato;
+            padding-bottom: 15px;
+        }
+
+        .combo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .combo-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .combo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .combo-header {
+            background-color: tomato;
+            color: white;
+            padding: 1rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .combo-dishes {
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .combo-dish {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .combo-dish-image {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .combo-dish-image:hover {
+            transform: translateY(-5px) scale(1.1);
+        }
+
+        .combo-dish-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .combo-dish-caption {
+            font-weight: 500;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .dessert-note {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px dashed #ddd;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Стили для уведомлений */
+        .notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            display: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1001;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            display: none;
+        }
+
+        .notification h3 {
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            font-size: 1.4rem;
+        }
+
+        .notification p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+
+        .notification-btn {
+            background-color: tomato;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .notification-btn:hover {
+            background-color: #ff4500;
+            color: #ffffff;
+        }
+
+        /* Адаптивность для блока комбо */
+        @media (max-width: 900px) {
+            .combo-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .combo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Существующие стили из pack_lunch.html */
+        .menu-section {
+            margin-bottom: 40px;
+        }
+
+        .dishes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+            align-items: stretch;
+        }
+
+        .dish-item {
+            display: flex;
+            flex-direction: column;
+            padding: 30px 40px;
+            border-radius: 35px;
+            cursor: pointer;
+            background-color: white;
+            filter: drop-shadow(17px 19px 24px rgba(0, 0, 0, 0.13));
+            transition: all 0.3s ease;
+            min-height: 450px;
+        }
+
+        .dish-item:hover {
+            border: 2px solid tomato;
+        }
+
+        .dish-item:hover button {
+            background-color: tomato;
+            color: white;
+        }
+
+        .dish-item img {
+            width: 100%;
+            height: 250px; 
+            object-fit: cover; 
+            border-radius: 35px;
+            margin-bottom: 15px;
+        }
+
+        .dish-item .price {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            min-height: 30px;
+        }
+
+        .dish-item .name {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            flex-grow: 1;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .dish-item .weight {
+            color: gray;
+            margin-bottom: 15px;
+            min-height: 20px;
+        }
+
+        .dish-item button {
+            background-color: #f1eee9;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: auto;
+            transition: background-color 0.3s ease;
+            min-height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background-color: #f1eee9;
+            border: 2px solid #ddd;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1rem;
+        }
+
+        .filter-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .filter-btn.active {
+            background-color: tomato;
+            color: white;
+            border-color: tomato;
+        }
+
+        .order-form-section {
+            margin-top: 50px;
+            padding: 40px;
+            background-color: #f9f9f9;
+            border-radius: 15px;
+            border-left: 5px solid tomato;
+        }
+
+        .order-form-section h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+            border-bottom: 3px solid tomato;
+            padding-bottom: 15px;
+        }
+
+        .order-form-section h2 {
+            color: tomato;
+            margin: 30px 0 20px 0;
+            font-size: 1.6rem;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .form-group select,
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Roboto Mono', monospace;
+            transition: border-color 0.3s;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: tomato;
+            outline: none;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .delivery-time {
+            margin: 20px 0;
+        }
+
+        .radio-group {
+            margin: 15px 0;
+        }
+
+        .radio-group label {
+            display: inline-flex;
+            align-items: center;
+            font-weight: normal;
+            margin-right: 25px;
+            cursor: pointer;
+        }
+
+        .radio-group input[type="radio"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-weight: normal;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(to right, transparent, #ccc, transparent);
+            margin: 30px 0;
+            border: none;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .form-buttons button {
+            padding: 12px 35px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-family: 'Roboto Mono', monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .reset-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .submit-btn {
+            background-color: tomato;
+            color: white;
+        }
+
+        .submit-btn:hover {
+            background-color: #ff4500;
+            transform: translateY(-2px);
+        }
+
+        .note {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .menu-select {
+            background-color: white;
+            border: 2px solid #ddd;
+        }
+
+        .dish-item.selected {
+            border: 2px solid tomato !important;
+        }
+
+        .order-total {
+            background-color: #f8f8f8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .total-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: tomato;
+            text-align: center;
+            margin: 0;
+        }
+
+        @media (max-width: 800px) {
+            .dishes-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .order-form-section {
+                padding: 20px;
+            }
+            
+            .filters {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                text-align: center;
+            }
+            
+            .menu-section h2 {
+                text-align: center;
+            }
+            
+            .dishes-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-buttons {
+                flex-direction: column;
+            }
+            
+            .form-buttons button {
+                width: 100%;
+            }
+            
+            .order-form-section {
+                padding: 15px;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .dish-item {
+                padding: 20px 25px;
+            }
+            
+            .order-form-section h1 {
+                font-size: 1.8rem;
+            }
+            
+            .order-form-section h2 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Food Construct</h1>
+        <nav>
+            <a href="index.html" class="link-light-bg">Главная</a>
+            <a href="index.html#about" class="link-light-bg">О нас</a>
+            <a href="pack_lunch.html" class="link-light-bg active">Собрать ланч</a>
+            <a href="index.html#contacts" class="link-light-bg">Контакты</a>
+            <a href="feedback.html" class="link-light-bg">Обратная связь</a>
+            <a href="auth.html" class="link-light-bg">Войти</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Новый блок с вариантами комбо -->
+        <section class="combo-section">
+            <h2>Доступные для заказа комбо</h2>
+            <div class="combo-grid">
+                <!-- Комбо 1 -->
+                <div class="combo-card">
+                    <div class="combo-header">Комбо 1</div>
+                    <div class="combo-dishes">
+                        <div class="combo-dish">
+                            <div class="combo-dish-image">
+                                <img src="tom_yam.png" alt="Суп" onerror="this.src='https://via.placeholder.com/70/ff6347/ffffff?text=Суп'">
+                            </div>
+                            <div class="combo-dish-caption">Суп</div>
+                        </div>
+                        <div class="combo-dish">
+                            <div class="combo-dish-image">
+                                <img src="lasagna.png" alt="Главное блюдо" onerror="this.src='https://via.placeholder.com/70/ff6347/ffffff?text=Главное'">
+                            </div>
+                            <div class="combo-dish-caption">Главное блюдо</div>
+                        </div>
+                        <div class="combo-dish">
+                            <div class="combo-dish-image">
+                                <img src="caesar_salad.png" alt="Салат" onerror="this.src='https://via.placeholder.com/70/ff6347/ffffff?text=Салат'">
+                            </div>
+                            <div class="combo-dish-caption">Салат</div>
+                        </div>
+                        <div class="combo-dish">
+                            <div class="combo-dish-image">
+                                <img src="orange.png" alt="Напиток" onerror="this.src='https://via.placeholder.com/70/ff6347/ffffff?text=Напиток'">
+                            </div>
+                            <div class="combo-dish-caption">Напиток</div>
+                        </div>
+                        <div class="dessert-note">
+                            * Десерт можно добавить к любому заказу
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Комбо 2 -->
+                <div class="combo-card">
+                    <div class="combo-header">Комбо 2</div>
+                    <div class="combo-dishes">
+                        <div class="combo-dish">
+                            <div class="combo-dish-image">
+                                <img src="borscht.png" alt="Суп" onerror="this.src='https://via.placeholder.com/70/ff6347/ffffff?text=Суп'">
+                            </div>
+                            <div class="combo-dish-caption">Суп</div>
+                        </div>
+                        <div class="combo-dish">
+                            <div class="combo-dish-image">
+                                <img src="fish_cutlet.png" alt="Главное блюдо" onerror="this.src='https://via.placeholder.com/70/ff6347/ffffff?text=Главное'">
+                            </div>
+                            <div class="combo-dish-caption">Главное блюдо</div>
+                        </div>
+                        <div class="combo-dish">
+                            <div class="combo-dish-image">
+                                <img src="cappuccino.png" alt="Напиток" onerror="this.src='https://via.placeholder.com/70/ff6347/ffffff?text=Напиток'">
+                            </div>
+                            <div class="combo-dish-caption">Напиток</div>
+                        </div>
+                        <div class="dessert-note">
+                            * Десерт можно добавить к любому заказу
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Комбо 3 -->
+                <div class="combo-card">
+                    <div class="combo-header">Комбо 3</div>
+                    <div class="combo-dishes">
+                        <div class="combo-dish">
+                            <div class="combo-dish-image">
+                                <img src="mushroom_soup.png" alt="Суп" onerror="this.src='https://via.placeholder.com/70/ff6347/ffffff?text=Суп'">
+                            </div>
+                            <div class="combo-dish-caption">Суп</div>
+                        </div>
+                        <div class="combo-dish">
+                            <div class="combo-dish-image">
+                                <img src="caprese.png" alt="Салат" onerror="this.src='https://via.placeholder.com/70/ff6347/ffffff?text=Салат'">
+                            </div>
+                            <div class="combo-dish-caption">Салат</div>
+                        </div>
+                        <div class="combo-dish">
+                            <div class="combo-dish-image">
+                                <img src="green_tea.png" alt="Напиток" onerror="this.src='https://via.placeholder.com/70/ff6347/ffffff?text=Напиток'">
+                            </div>
+                            <div class="combo-dish-caption">Напиток</div>
+                        </div>
+                        <div class="dessert-note">
+                            * Десерт можно добавить к любому заказу
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Комбо 4 -->
+                <div class="combo-card">
+                    <div class="combo-header">Комбо 4</div>
+                    <div class="combo-dishes">
+                        <div class="combo-dish">
+                            <div class="combo-dish-image">
+                                <img src="mushrooms.png" alt="Главное блюдо" onerror="this.src='https://via.placeholder.com/70/ff6347/ffffff?text=Главное'">
+                            </div>
+                            <div class="combo-dish-caption">Главное блюдо</div>
+                        </div>
+                        <div class="combo-dish">
+                            <div class="combo-dish-image">
+                                <img src="korean_salad.png" alt="Салат" onerror="this.src='https://via.placeholder.com/70/ff6347/ffffff?text=Салат'">
+                            </div>
+                            <div class="combo-dish-caption">Салат</div>
+                        </div>
+                        <div class="combo-dish">
+                            <div class="combo-dish-image">
+                                <img src="apple.png" alt="Напиток" onerror="this.src='https://via.placeholder.com/70/ff6347/ffffff?text=Напиток'">
+                            </div>
+                            <div class="combo-dish-caption">Напиток</div>
+                        </div>
+                        <div class="dessert-note">
+                            * Десерт можно добавить к любому заказу
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Комбо 5 -->
+                <div class="combo-card">
+                    <div class="combo-header">Комбо 5</div>
+                    <div class="combo-dishes">
+                        <div class="combo-dish">
+                            <div class="combo-dish-image">
+                                <img src="pasta_shrimp.png" alt="Главное блюдо" onerror="this.src='https://via.placeholder.com/70/ff6347/ffffff?text=Главное'">
+                            </div>
+                            <div class="combo-dish-caption">Главное блюдо</div>
+                        </div>
+                        <div class="combo-dish">
+                            <div class="combo-dish-image">
+                                <img src="black_tea.png" alt="Напиток" onerror="this.src='https://via.placeholder.com/70/ff6347/ffffff?text=Напиток'">
+                            </div>
+                            <div class="combo-dish-caption">Напиток</div>
+                        </div>
+                        <div class="dessert-note">
+                            * Десерт можно добавить к любому заказу
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Супы -->
+        <section class="menu-section">
+            <h2>Супы</h2>
+            <div class="filters" data-category="soup">
+                <button class="filter-btn" data-kind="fish">рыбный</button>
+                <button class="filter-btn" data-kind="meat">мясной</button>
+                <button class="filter-btn" data-kind="veg">вегетарианский</button>
+            </div>
+            <div class="dishes-grid" id="soup-dishes">
+            </div>
+        </section>
+
+        <!-- Главные блюда -->
+        <section class="menu-section">
+            <h2>Главные блюда</h2>
+            <div class="filters" data-category="main">
+                <button class="filter-btn" data-kind="fish">рыбное</button>
+                <button class="filter-btn" data-kind="meat">мясное</button>
+                <button class="filter-btn" data-kind="veg">вегетарианское</button>
+            </div>
+            <div class="dishes-grid" id="main-dishes">
+            </div>
+        </section>
+
+        <!-- Салаты и стартеры -->
+        <section class="menu-section">
+            <h2>Салаты и стартеры</h2>
+            <div class="filters" data-category="starter">
+                <button class="filter-btn" data-kind="fish">рыбный</button>
+                <button class="filter-btn" data-kind="meat">мясной</button>
+                <button class="filter-btn" data-kind="veg">вегетарианский</button>
+            </div>
+            <div class="dishes-grid" id="starter-dishes">
+            </div>
+        </section>
+
+        <!-- Напитки -->
+        <section class="menu-section">
+            <h2>Напитки</h2>
+            <div class="filters" data-category="drink">
+                <button class="filter-btn" data-kind="cold">холодный</button>
+                <button class="filter-btn" data-kind="hot">горячий</button>
+            </div>
+            <div class="dishes-grid" id="drink-dishes">
+            </div>
+        </section>
+
+        <!-- Десерты -->
+        <section class="menu-section">
+            <h2>Десерты</h2>
+            <div class="filters" data-category="dessert">
+                <button class="filter-btn" data-kind="small">маленькая порция</button>
+                <button class="filter-btn" data-kind="medium">средняя порция</button>
+                <button class="filter-btn" data-kind="large">большая порция</button>
+            </div>
+            <div class="dishes-grid" id="dessert-dishes">
+            </div>
+        </section>
+
+        <!-- Форма заказа -->
+        <section class="order-form-section">
+            <h1>Сделать заказ</h1>
+            
+            <form id="order-form" action="https://httpbin.org/post" method="post">
+                <!-- Раздел заказа -->
+                <h2>Ваш заказ</h2>
+                
+                <div class="form-group">
+                    <label for="soup">Суп</label>
+                    <select id="soup" name="soup" class="menu-select">
+                        <option value="">-- Выберите суп --</option>
+                        <option value="">Суп отсутствует в заказе</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="main-course">Главное блюдо</label>
+                    <select id="main-course" name="main_course" class="menu-select" required>
+                        <option value="">-- Выберите главное блюдо --</option>
+                        <option value="">Блюдо отсутствует в заказе</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="starter">Салат или стартер</label>
+                    <select id="starter" name="starter" class="menu-select">
+                        <option value="">-- Выберите салат или стартер --</option>
+                        <option value="">Стартер отсутствует в заказе</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="drink">Напиток</label>
+                    <select id="drink" name="drink" class="menu-select" required>
+                        <option value="">-- Выберите напиток --</option>
+                        <option value="">Напиток отсутствует в заказе</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dessert">Десерт</label>
+                    <select id="dessert" name="dessert" class="menu-select">
+                        <option value="">-- Выберите десерт --</option>
+                        <option value="">Десерт отсутствует в заказе</option>
+                    </select>
+                </div>
+                
+                <!-- Блок для отображения стоимости -->
+                <div id="order-total" style="display: none;"></div>
+                
+                <div class="form-group">
+                    <label for="order-comments">Комментарии к заказу</label>
+                    <textarea id="order-comments" name="order_comments" placeholder="Укажите дополнительные пожелания к заказу..."></textarea>
+                </div>
+                
+                <hr class="divider">
+                
+                <!-- Раздел данных клиента -->
+                <h2>Ваши данные</h2>
+                
+                <div class="form-group">
+                    <label for="name">Имя</label>
+                    <input type="text" id="name" name="name" required placeholder="Введите ваше имя">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required placeholder="example@mail.ru">
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="promotions" name="promotions" checked>
+                    <label for="promotions">Получать информацию о скидках и акциях</label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Номер телефона</label>
+                    <input type="tel" id="phone" name="phone" required placeholder="+7 (000) 000-00-00">
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">Адрес доставки</label>
+                    <input type="text" id="address" name="address" required placeholder="Улица, дом, квартира">
+                    <p class="note">Доставка осуществляется только по Москве</p>
+                </div>
+                
+                <div class="delivery-time">
+                    <label>Время доставки:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="asap" name="delivery_time" value="asap" checked>
+                        <label for="asap">Как можно скорее</label>
+                    </div>
+                    <div class="radio-group">
+                        <input type="radio" id="scheduled" name="delivery_time" value="scheduled">
+                        <label for="scheduled">К указанному времени</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="delivery-time-specific">Укажите время доставки</label>
+                    <input type="text" id="delivery-time-specific" name="delivery_time_specific" placeholder="--:--" disabled>
+                    <p class="note">Доступное время доставки с 7:00 до 23:00</p>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="reset" class="reset-btn">Сбросить</button>
+                    <button type="submit" class="submit-btn">Отправить</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <footer id="contacts">
+        <p class="white-color-for-text">Позвонить нам: <a href="tel:+70000000000" class="link-dark-bg">+7-000-000-00-00</a></p>
+    </footer>
+
+    <!-- Уведомления -->
+    <div class="notification-overlay"></div>
+    <div class="notification">
+        <h3 class="notification-title">Уведомление</h3>
+        <p class="notification-message">Сообщение</p>
+        <button class="notification-btn">Окей</button>
+    </div>
+
+    <script>
+        // Определяем допустимые комбинации блюд согласно заданию
+        const validCombinations = [
+            ['soup', 'main', 'starter', 'drink'],      // Комбо 1: Суп + Главное + Салат + Напиток
+            ['soup', 'main', 'drink'],                 // Комбо 2: Суп + Главное + Напиток
+            ['soup', 'starter', 'drink'],              // Комбо 3: Суп + Салат + Напиток
+            ['main', 'starter', 'drink'],              // Комбо 4: Главное + Салат + Напиток
+            ['main', 'drink']                          // Комбо 5: Главное + Напиток
+        ];
+
+        // Функция для показа уведомления
+        function showNotification(title, message) {
+            const notification = document.querySelector('.notification');
+            const overlay = document.querySelector('.notification-overlay');
+            const notificationTitle = document.querySelector('.notification-title');
+            const notificationMessage = document.querySelector('.notification-message');
+            
+            notificationTitle.textContent = title;
+            notificationMessage.textContent = message;
+            
+            notification.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        // Функция для скрытия уведомления
+        function hideNotification() {
+            const notification = document.querySelector('.notification');
+            const overlay = document.querySelector('.notification-overlay');
+            
+            notification.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        // Обработчик для кнопки уведомления
+        document.querySelector('.notification-btn').addEventListener('click', hideNotification);
+        document.querySelector('.notification-overlay').addEventListener('click', hideNotification);
+
+        // Функция проверки состава заказа
+        function validateOrder() {
+            const soupSelect = document.getElementById('soup');
+            const mainSelect = document.getElementById('main-course');
+            const starterSelect = document.getElementById('starter');
+            const drinkSelect = document.getElementById('drink');
+            const dessertSelect = document.getElementById('dessert');
+            
+            // Проверяем, что выбраны блюда (значение не пустое и не "отсутствует в заказе")
+            const hasSoup = soupSelect.value && soupSelect.value !== '';
+            const hasMain = mainSelect.value && mainSelect.value !== '';
+            const hasStarter = starterSelect.value && starterSelect.value !== '';
+            const hasDrink = drinkSelect.value && drinkSelect.value !== '';
+            const hasDessert = dessertSelect.value && dessertSelect.value !== '';
+
+            // Проверяем, соответствует ли выбранный набор одному из допустимых комбо
+            const isValid = validCombinations.some(combo => {
+                const soupRequired = combo.includes('soup');
+                const mainRequired = combo.includes('main');
+                const starterRequired = combo.includes('starter');
+                const drinkRequired = combo.includes('drink');
+                
+                // Проверяем соответствие комбинации
+                const soupMatch = soupRequired ? hasSoup : true;
+                const mainMatch = mainRequired ? hasMain : true;
+                const starterMatch = starterRequired ? hasStarter : true;
+                const drinkMatch = drinkRequired ? hasDrink : true;
+                
+                return soupMatch && mainMatch && starterMatch && drinkMatch;
+            });
+
+            return isValid;
+        }
+
+        // Функция определения, какое уведомление показать
+        function getNotificationType() {
+            const soupSelect = document.getElementById('soup');
+            const mainSelect = document.getElementById('main-course');
+            const starterSelect = document.getElementById('starter');
+            const drinkSelect = document.getElementById('drink');
+            const dessertSelect = document.getElementById('dessert');
+            
+            const hasSoup = soupSelect.value && soupSelect.value !== '';
+            const hasMain = mainSelect.value && mainSelect.value !== '';
+            const hasStarter = starterSelect.value && starterSelect.value !== '';
+            const hasDrink = drinkSelect.value && drinkSelect.value !== '';
+            const hasDessert = dessertSelect.value && dessertSelect.value !== '';
+
+            // 1. Ничего не выбрано
+            if (!hasSoup && !hasMain && !hasStarter && !hasDrink && !hasDessert) {
+                return {
+                    title: 'Ничего не выбрано',
+                    message: 'Ничего не выбрано. Выберите блюда для заказа'
+                };
+            }
+
+            // 2. Выберите напиток (выбраны все необходимые блюда, кроме напитка)
+            if ((hasSoup && hasMain && hasStarter && !hasDrink) || 
+                (hasSoup && hasMain && !hasDrink) ||
+                (hasSoup && hasStarter && !hasDrink) ||
+                (hasMain && hasStarter && !hasDrink) ||
+                (hasMain && !hasDrink)) {
+                return {
+                    title: 'Выберите напиток',
+                    message: 'Выберите напиток'
+                };
+            }
+
+            // 3. Выберите главное блюдо/салат/стартер (выбран суп, но не выбраны главное/салат/стартер)
+            if (hasSoup && !hasMain && !hasStarter) {
+                return {
+                    title: 'Выберите главное блюдо/салат/стартер',
+                    message: 'Выберите главное блюдо/салат/стартер'
+                };
+            }
+
+            // 4. Выберите суп или главное блюдо (выбран салат/стартер, но не выбраны суп/главное блюдо)
+            if (hasStarter && !hasSoup && !hasMain) {
+                return {
+                    title: 'Выберите суп или главное блюдо',
+                    message: 'Выберите суп или главное блюдо'
+                };
+            }
+
+            // 5. Выберите главное блюдо (выбран напиток/десерт)
+            if ((hasDrink || hasDessert) && !hasMain) {
+                return {
+                    title: 'Выберите главное блюдо',
+                    message: 'Выберите главное блюдо'
+                };
+            }
+
+            // Если ни одно из условий не выполнено, но заказ все равно невалиден
+            return {
+                title: 'Неполный заказ',
+                message: 'Выбранные блюда не соответствуют ни одному из доступных комбо. Пожалуйста, выберите один из предложенных вариантов.'
+            };
+        }
+
+        // Обработчик отправки формы
+        document.getElementById('order-form').addEventListener('submit', function(event) {
+            // Проверяем валидность заказа
+            if (!validateOrder()) {
+                // Если заказ невалиден, показываем уведомление и предотвращаем отправку формы
+                event.preventDefault();
+                const notification = getNotificationType();
+                showNotification(notification.title, notification.message);
+            }
+            // Если заказ валиден, форма отправится нормально
+        });
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Активация поля ввода времени при выборе соответствующей опции
+            const asapRadio = document.getElementById('asap');
+            const scheduledRadio = document.getElementById('scheduled');
+            const timeInput = document.getElementById('delivery-time-specific');
+            
+            function updateTimeInput() {
+                if (scheduledRadio.checked) {
+                    timeInput.disabled = false;
+                    timeInput.required = true;
+                } else {
+                    timeInput.disabled = true;
+                    timeInput.required = false;
+                    timeInput.value = '';
+                }
+            }
+            
+            asapRadio.addEventListener('change', updateTimeInput);
+            scheduledRadio.addEventListener('change', updateTimeInput);
+            
+            // Инициализация состояния
+            updateTimeInput();
+        });
+    </script>
+</body>
+</html>
